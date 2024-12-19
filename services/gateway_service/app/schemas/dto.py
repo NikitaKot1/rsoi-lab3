@@ -1,5 +1,5 @@
 from pydantic import BaseModel, validator
-from typing import Literal, Annotated, List
+from typing import Literal, Annotated, List, Any
 from uuid import UUID
 from datetime import datetime, date
 
@@ -104,7 +104,7 @@ class ReservationResponse(BaseModel):
     startDate: date
     endDate: date
     status: Literal['PAID', 'CANCELED']
-    payment: PaymentInfo
+    payment: PaymentInfo | None
 
     @validator("startDate", pre=True)
     def parse_date(cls, value):
@@ -123,7 +123,7 @@ class ReservationResponse(BaseModel):
 
 class UserInfoResponse(BaseModel):
     reservations: List[ReservationResponse]
-    loyalty: LoyaltyInfoResponse
+    loyalty: LoyaltyInfoResponse | Any = {}
 
 
 class ErrorResponse(BaseModel):
@@ -138,6 +138,10 @@ class ErrorDescription(BaseModel):
 class ValidationErrorResponse(BaseModel):
     message: str
     errors: List[ErrorDescription]
+
+
+class UnavailableService(BaseModel):
+    message: str
 
 
 class CreateReservationRequestForReservService(BaseModel):
